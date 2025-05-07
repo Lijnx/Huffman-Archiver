@@ -2,11 +2,11 @@
 
 void init_queue(Queue *queue) {
     /**
-     * Инициализирует очередь.
+     * @brief Инициализирует очередь.
      *
-     * Устанавливает длину в 0, а указатели на первый и последний элемент — в NULL.
+     * Устанавливает длину в 0, а указатели на первый и последний элемент - в NULL.
      *
-     * @param queue — указатель на структуру очереди.
+     * @param queue Указатель на структуру очереди.
      */
     queue->length = 0;
     queue->last = NULL;
@@ -15,22 +15,22 @@ void init_queue(Queue *queue) {
 
 int is_empty(Queue queue) {
     /**
-     * Проверяет, пуста ли очередь.
+     * @brief Проверяет, пуста ли очередь.
      *
-     * @param queue — структура очереди.
-     * @return 1 — если очередь пуста; 0 — иначе.
+     * @param queue Структура очереди.
+     * @return 1 - если очередь пуста; 0 - иначе.
      */
     return (queue.length == 0) ? 1 : 0;
 }
 
 Item* new_item(Node *node, unsigned long long priority, Item *prev, Item *next) {
     /**
-     * Создаёт новый элемент очереди с заданным значением и приоритетом.
+     * @brief Создаёт новый элемент очереди с заданным значением и приоритетом.
      *
-     * @param node — указатель на узел дерева Хаффмана.
-     * @param priority — приоритет элемента.
-     * @param prev — предыдущий элемент.
-     * @param next — следующий элемент.
+     * @param node Указатель на узел дерева Хаффмана.
+     * @param priority Приоритет элемента.
+     * @param prev Предыдущий элемент.
+     * @param next Следующий элемент.
      * @return указатель на созданный элемент или NULL при ошибке выделения памяти.
      */
     Item* new = (Item*)malloc(sizeof(Item));
@@ -45,14 +45,14 @@ Item* new_item(Node *node, unsigned long long priority, Item *prev, Item *next) 
 
 void enqueue(Queue *queue, Node *node, unsigned long long priority) {
     /**
-     * Добавляет элемент в очередь по приоритету (по возрастанию).
+     * @brief Добавляет элемент в очередь по приоритету (по возрастанию).
      *
      * Вставляет новый элемент в отсортированное место, сохраняя порядок.
      * При нехватке памяти выводит сообщение и удаляет переданный узел.
      *
-     * @param queue — указатель на очередь.
-     * @param node — узел дерева, связанный с элементом.
-     * @param priority — приоритет элемента.
+     * @param queue Указатель на очередь.
+     * @param node Узел дерева, связанный с элементом.
+     * @param priority Приоритет элемента.
      */
     Item* new = new_item(node, priority, NULL, NULL);
     if (new) {
@@ -106,9 +106,9 @@ void enqueue(Queue *queue, Node *node, unsigned long long priority) {
 
 Node *get_node(Queue queue) {
     /**
-     * Возвращает узел дерева из первого элемента очереди.
+     * @brief Возвращает узел дерева из первого элемента очереди.
      *
-     * @param queue — очередь.
+     * @param queue Очередь.
      * @return указатель на узел, либо NULL, если очередь пуста.
      */
     if (!is_empty(queue)) {
@@ -119,9 +119,9 @@ Node *get_node(Queue queue) {
 
 unsigned long long get_priority(Queue queue) {
     /**
-     * Возвращает приоритет первого элемента в очереди.
+     * @brief Возвращает приоритет первого элемента в очереди.
      *
-     * @param queue — очередь.
+     * @param queue Очередь.
      * @return приоритет первого элемента или 0, если очередь пуста.
      */
     if (!is_empty(queue))
@@ -131,12 +131,12 @@ unsigned long long get_priority(Queue queue) {
 
 void dequeue(Queue *queue) {
     /**
-     * Удаляет первый элемент из очереди.
+     * @brief Удаляет первый элемент из очереди.
      *
      * Корректно освобождает память и обновляет указатели.
-     * При попытке удалить из пустой очереди — сообщает об ошибке.
+     * При попытке удалить из пустой очереди - сообщает об ошибке.
      *
-     * @param queue — указатель на очередь.
+     * @param queue Указатель на очередь.
      */
     if (!is_empty(*queue)) {
         if (queue->first == queue->last) {
@@ -156,12 +156,12 @@ void dequeue(Queue *queue) {
 
 void delete_queue(Queue *queue) {
     /**
-     * Удаляет всю очередь и освобождает память всех связанных узлов.
+     * @brief Удаляет всю очередь и освобождает память всех связанных узлов.
      *
      * Также вызывает delete_tree() для каждого узла,
      * связанного с элементами очереди.
      *
-     * @param queue — указатель на очередь.
+     * @param queue Указатель на очередь.
      */
     while (!is_empty(*queue)) {
         delete_tree(get_node(*queue));

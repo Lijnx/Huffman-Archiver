@@ -3,15 +3,11 @@
 
 /**
  * Структура узла дерева Хаффмана.
- * 
- * Каждый узел может содержать:
- * - значение символа (value),
- * - указатели на левого и правого потомков.
  */
 typedef struct Node {
-    unsigned char value;
-    struct Node* left;
-    struct Node* right;
+    unsigned char value;    ///< Значение узла (символ).
+    struct Node* left;      ///< Указатель на левого потомка.
+    struct Node* right;     ///< Указатель на правого потомка.
 } Node;
 
 /**
