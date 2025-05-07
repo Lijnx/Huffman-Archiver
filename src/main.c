@@ -8,6 +8,13 @@
 enum {BUFFER_SIZE = 4096};
 enum {ALPHABET_SIZE = 256};
 
+/**
+ * @brief Вычисляет LBO (Least Significant Bit Overflow) для таблицы частот и таблицы кодов.
+ * 
+ * @param freq_table Массив частот для каждого символа.
+ * @param code_table Таблица битовых представлений для каждого символа.
+ * @return Размер LBO, который может быть использован для дополнения битового потока.
+ */
 size_t get_lbo(const unsigned long long *freq_table, Bitset *code_table) {
     size_t result = 0;
     for (size_t i = 0; i < ALPHABET_SIZE; i++) {
@@ -16,6 +23,12 @@ size_t get_lbo(const unsigned long long *freq_table, Bitset *code_table) {
     return (result % 8);
 }
 
+/**
+ * @brief Кодирует узел дерева Хаффмана в битовый поток.
+ * 
+ * @param writer Структура для записи битов в выходной поток.
+ * @param node Узел дерева, который нужно закодировать.
+ */
 void encode_node(Writer *writer, Node *node) {
     if (is_leaf(node)) {
         write_bit(writer, 1);
@@ -28,6 +41,12 @@ void encode_node(Writer *writer, Node *node) {
     }
 }
 
+/**
+ * @brief Читает узел дерева Хаффмана из битового потока.
+ * 
+ * @param reader Структура для чтения битов из входного потока.
+ * @return Указатель на считанный узел дерева.
+ */
 Node* read_node(Reader *reader) {
     if (read_bit(reader) == 1)
         return new_node(read_byte(reader), NULL, NULL);
@@ -38,6 +57,12 @@ Node* read_node(Reader *reader) {
     }
 }
 
+/**
+ * @brief Создает таблицу частот символов из входного файла.
+ * 
+ * @param input Входной файл, из которого извлекаются символы.
+ * @param freq_table Массив для хранения частот каждого символа.
+ */
 void create_freq_table(FILE* input, unsigned long long *freq_table) {
     unsigned char buffer[BUFFER_SIZE] = "";
     size_t read = fread(buffer, sizeof(char), BUFFER_SIZE, input);
@@ -48,6 +73,12 @@ void create_freq_table(FILE* input, unsigned long long *freq_table) {
     }
 }
 
+/**
+ * @brief Генерирует дерево Хаффмана на основе таблицы частот.
+ * 
+ * @param freq_table Массив частот символов.
+ * @return Указатель на корень дерева Хаффмана.
+ */
 Node* generate_tree(unsigned long long *freq_table) {
     Queue queue;
     init_queue(&queue);
@@ -91,6 +122,13 @@ Node* generate_tree(unsigned long long *freq_table) {
     else return NULL;
 }
 
+/**
+ * @brief Генерирует битовые представления для каждого символа в кодировке Хаффмана.
+ * 
+ * @param node Узел дерева Хаффмана.
+ * @param bs Текущий битсет.
+ * @param code_table Таблица битовых представлений для каждого символа.
+ */
 void generate_bitsets(Node* node, Bitset bs, Bitset* code_table) {
     if (node) {
         if (is_leaf(node)) {
@@ -107,6 +145,13 @@ void generate_bitsets(Node* node, Bitset bs, Bitset* code_table) {
     }
 }
 
+/**
+ * @brief Сжимает данные, используя таблицу битовых представлений для кодирования.
+ * 
+ * @param input Входной файл для сжатия.
+ * @param writer Структура для записи сжатых данных.
+ * @param code_table Таблица битовых представлений для символов.
+ */
 void compress(FILE *input, Writer *writer, Bitset* code_table) {
     unsigned char buffer[BUFFER_SIZE] = "";
 
@@ -119,6 +164,14 @@ void compress(FILE *input, Writer *writer, Bitset* code_table) {
     }
 }
 
+/**
+ * @brief Дешифрует данные, используя дерево Хаффмана.
+ * 
+ * @param reader Структура для чтения битов.
+ * @param output Файл для записи декодированных данных.
+ * @param h_tree Корень дерева Хаффмана.
+ * @param lbo Значение LBO для завершения декодирования.
+ */
 void decompress(Reader *reader, FILE* output, Node *h_tree, size_t lbo) {
     Node *node = h_tree;
     while (!feof(reader->input) || reader->bits_filled != (8 - lbo)) {
@@ -136,6 +189,13 @@ void decompress(Reader *reader, FILE* output, Node *h_tree, size_t lbo) {
     }
 }
 
+/**
+ * @brief Архивирует или восстанавливает данные в зависимости от режима.
+ * 
+ * @param input Входной файл для обработки.
+ * @param output Выходной файл для записи результата.
+ * @param mode Режим работы: 'c' для сжатия и 'd' для восстановления.
+ */
 void archiver(FILE* input, FILE* output, char mode) {
     if (mode == 'c') {
         long pos = ftell(input);
@@ -180,6 +240,12 @@ void archiver(FILE* input, FILE* output, char mode) {
     }
 }
 
+/**
+ * @brief Обрабатывает аргументы командной строки и вызывает соответствующую функцию архивации.
+ * 
+ * @param argc Количество аргументов командной строки.
+ * @param argv Массив строк с аргументами командной строки.
+ */
 void console_handler(int argc, char** argv) {
     if (argc == 4) {
         if (strcmp(argv[1], "c") == 0 || strcmp(argv[1], "d") == 0) {
@@ -195,9 +261,14 @@ void console_handler(int argc, char** argv) {
     }
 }
 
+/**
+ * @brief Основная функция программы, инициирует обработку файлов через console_handler.
+ * 
+ * @param argc Количество аргументов командной строки.
+ * @param argv Массив строк с аргументами командной строки.
+ * @return Возвращает EXIT_SUCCESS в случае успеха.
+ */
 int main(int argc, char** argv) {
-
     console_handler(argc, argv);
-
     return EXIT_SUCCESS;
 }

@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include "tree.h"
 
+/**
+ * Элемент очереди, содержащий:
+ * - указатель на узел дерева Хаффмана,
+ * - приоритет,
+ * - указатели на предыдущий и следующий элементы.
+ */
 typedef struct Item {
     Node *value;
     unsigned long long priority;
@@ -10,6 +16,10 @@ typedef struct Item {
     struct Item *prev;
 } Item;
 
+/**
+ * Структура очереди с приоритетом.
+ * Содержит указатели на первый и последний элементы и длину очереди.
+ */
 typedef struct Queue {
     size_t length;
     Item *first;

@@ -1,12 +1,34 @@
 #include "tree.h"
 
 int is_leaf(Node *node) {
+    /**
+     * Проверяет, является ли данный узел листом дерева Хаффмана.
+     *
+     * Условие:
+     * - Узел считается листом, если у него нет потомков (оба указателя — NULL).
+     *
+     * @param node — указатель на узел дерева.
+     * @return 1 — если это лист; 0 — если не лист; -1 — если узел NULL.
+     */
     if (node)
         return (!node->left && !node->right) ? 1 : 0;
-    else return -1;
+    else
+        return -1;
 }
 
 Node* new_node(unsigned char value, Node *left, Node *right) {
+    /**
+     * Создаёт новый узел дерева Хаффмана.
+     *
+     * Выделяет память под новый узел и инициализирует:
+     * - значение символа (value),
+     * - указатели на левого и правого потомков.
+     *
+     * @param value — байт (символ), который хранит узел.
+     * @param left — указатель на левого потомка.
+     * @param right — указатель на правого потомка.
+     * @return указатель на созданный узел, либо NULL при ошибке выделения памяти.
+     */
     Node* new = (Node*)malloc(sizeof(Node));
     if (new) {
         new->value = value;
@@ -17,6 +39,14 @@ Node* new_node(unsigned char value, Node *left, Node *right) {
 }
 
 void delete_tree(Node *node) {
+    /**
+     * Рекурсивно освобождает память, занятую деревом Хаффмана.
+     *
+     * Для каждого узла вызывает delete_tree на его потомках,
+     * затем освобождает текущий узел.
+     *
+     * @param node — корень поддерева (или всего дерева), которое нужно удалить.
+     */
     if (node) {
         delete_tree(node->left);
         delete_tree(node->right);
