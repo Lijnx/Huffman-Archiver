@@ -1,0 +1,1 @@
+gcc -o archiver bitio.c bitset.c queue.c tree.c main.c
